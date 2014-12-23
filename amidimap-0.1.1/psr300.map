@@ -1,0 +1,208 @@
+; The PSR300 is decidedly non-GM. For a start, the voices are all different;
+; in addition, channel 15 is the drum track, not channel 9. Sigh.
+
+9 &35 > 15 #99 &39	; Acoustic bass drum
+9 &36 > 15 #99 &39	; Bass drum 1
+9 &37 > 15 #99 &85	; Side stick
+9 &38 > 15 #99 &37	; Acoustic snare
+9 &39 > 15 #99 &85	; Hand clap
+9 &40 > 15 #99 &54	; Electric snare
+9 &41 > 15 #99 &42	; Low floor tom
+9 &42 > 15 #99 &63	; Close hi-hat
+9 &43 > 15 #99 &42	; High floor tom
+9 &44 > 15 #99 &68	; Pedal hi-hat
+9 &45 > 15 #99 &44	; Low tom
+9 &46 > 15 #99 &66	; Open hi-hat
+9 &47 > 15 #99 &46	; Low-mid tom
+9 &48 > 15 #99 &49	; Hi-mid tom
+9 &49 > 15 #99 &66	; Crash cymbal 1
+9 &50 > 15 #99 &49	; High tom
+9 &51 > 15 #99 &75	; Ride cymbal 1
+9 &52 > 15 #99 &70	; Chinese cymbal
+9 &53 > 15 #99 &73	; Ride bell
+9 &54 > 15 #99 &63	; Tambourine
+9 &55 > 15 #99 &73	; Splash cymbal
+9 &56 > 15 #99 &49	; Cowbell
+9 &57 > 15 #99 &70	; Crash cymbal 2
+9 &58 > X		; Vibraslap
+9 &59 > 15 #99 &75	; Ride cymbal 2
+9 &60 > 15 #99 &82	; High bongo
+9 &61 > 15 #99 &78	; Low bongo
+9 &62 > 15 #99 &44	; Mute high conga
+9 &63 > 15 #99 &49	; Open high conga
+9 &64 > 15 #99 &46	; Low conga
+9 &65 > 15 #99 &80	; High timbale
+9 &66 > 15 #99 &78	; Low timbale
+9 &67 > 15 #99 &82	; High agogo
+9 &68 > 15 #99 &80	; Low agogo
+9 &69 > 15 #99 &63	; Cabasa
+9 &70 > 15 #99 &63	; Maracas
+9 &71 > X		; Short whistle
+9 &72 > X		; Long whistle
+9 &73 > X		; Short guiro
+9 &74 > X		; Long guiro
+9 &75 > 15 #99 &109	; Claves
+9 &76 > 15 #99 &106	; High wood block
+9 &77 > 15 #99 &106	; Low wood block
+9 &78 > X		; Mute cuica
+9 &79 > X		; Open cuica
+9 &80 > 15 #99 &63	; Mute triangle
+9 &81 > 15 #99 &63	; Open triangle
+
+; There's a gotcha here. I used to have '9 > X', meaning to throw all
+; unspecified instruments away. Unfortunately, this also threw away all non-
+; note events... like volume changes.
+
+9 > 15 ; redirect all other events
+
+; Now we've moved everything on channel 9 to channel 15, channel 9 is clear.
+; Move everything on channel 15 onto the now vacant channel 9.
+
+15 = 9
+
+; And now we process voices.
+
+#0 > #0		; Acoustic piano
+#1 > #1		; Electric piano 1
+#2 > #2		; Electric piano 2
+#3 > #3		; Electric piano 3
+#4 > #4		; Electric piano 4
+#5 > #5		; Electric piano 5
+#6 > #6		; Harpsichord
+#7 > #9		; Clavinet
+
+#8 > #8		; Celesta
+#9 > #59	; Glockenspiel
+#10 > #94	; Music box
+#11 > #58	; Vibraphone
+#12 > #56	; Marimba
+#13 > #57	; Xylophone
+#14 > #94	; Tubular bells (= music box)
+#15 > #60	; Dulcimer
+
+#16 > #15	; Drawbar organ (= electic organ 4)
+#17 > #14	; Percussive organ (= electric organ 3)
+#18 > #13	; Rock organ (= electric organ 2)
+#19 > #10	; Pipe organ
+#20 > #16	; Reed organ
+#21 > #17	; Accordian
+#22 > #92	; Harmonica
+#23 > #17	; Tango accordian (= accordian)
+
+#24 > #27	; Acoustic guitar (= folk guitar)
+#25 > #29	; Steel guitar
+#26 > #19	; Electric guitar (= tremolo electric guitar)
+#27 > #18	; Electric guitar clean (= electric guitar)
+#28 > #20	; Electric guitar muted (= mute guitar)
+#29 > #23	; Overdriven guitar
+#30 > #24	; Distortion guitar
+#31 > #93	; Guitar harmonics (= glass harp)
+
+#32 > #85	; Acoustic bass
+#33 > #82	; Electric bass
+#34 > #82	; Electric bass
+#35 > #84	; Fretless bass
+#36 > #83	; Slap bass
+#37 > #83	; Slap bass
+#38 > #87	; Synth bass
+#39 > #87	; Synth bass
+
+#40 > #31	; Violin (= non-tremolo violin)
+#41 > #34	; Viola (= cello)
+#42 > #34	; Cello
+#43 > #34	; Contrabass (= cello)
+#44 > #30	; Tremolo strings (= tremolo violin)
+#45 > #33	; Pizzicato
+#46 > #32	; Orchestral strings (= violin duo)
+#47 > #98	; Timpani
+
+#48 > #35	; String ensemble 1
+#49 > #36	; String ensemble 2
+#50 > #69	; Synthstrings 1
+#51 > #70	; Synthstrings 2
+#52 > #61	; Choir aah
+#53 > #62	; Choir ooh
+#54 > #62	; Synth voice (= choir ooh)
+#55 > #95	; Orchestra hit
+
+#56 > #39	; Trumpet
+#57 > #43	; Trombone
+#58 > #47	; Tuba
+#59 > #41	; Muted trumpet
+#60 > #45	; French horn
+#61 > #48	; Brass ensemble
+#62 > #75	; Synthbrass 1
+#63 > #76	; Synthbrass 2
+
+#64 > #49	; Soprano sax (= piccolo)
+#65 > #51	; Alto sax (= clarinet)
+#66 > #52	; Tenor sax (= saxophone)
+#67 > #47	; Baritone sax (= tuba)
+#68 > #52	; Oboe (= saxophone)
+#69 > #45	; English horn (= French horn)
+#70 > #47	; Bassoon (= tuba)
+#71 > #51	; Clarinet
+
+#72 > #49	; Piccolo
+#73 > #50	; Flute
+#74 > #50	; Recorder (= flute)
+#75 > #91	; Pan flute
+#76 > #91	; Blown bottle (= pan flute)
+#77 > #50	; Skakuhachi(?) (= flute)
+#78 > #49	; Whistle (= piccolo)
+#79 > #91	; Ocarina (= pan flute)
+
+#80 > #72	; Squarewave (= synth strings 4)
+#81 > #76	; Sawtooth (= synth brass 2)
+#82 > #65	; Calliope (= synth reed 3)
+#83 > #75	; Chiff (= synth brass 1)
+#84 > #75	; Charang (= synth brass 1)
+#85 > #62	; Voice (= chorus 2)
+#86 > #71	; Fifths (= synth strings 3)
+#87 > #48	; Brass & lead (= brass ensemble)
+
+#88 > #78	; New age pad (= fantasy 2)
+#89 > #70	; Warm pad (= synth strings 2)
+#90 > #76	; Polysynth (= synth brass 2)
+#91 > #61	; Choir (= chorus 1)
+#92 > #69	; Bowed pad (= synth strings 1)
+#93 > #76	; Metallic pad (= synth brass 2)
+#94 > #77	; Halo (= fantasy 1)
+#95 > #78	; Sweep (= fantasy 2)
+
+#96 > X		; Rain
+#97 > X		; Soundtrack
+#98 > X		; Crystal
+#99 > X		; Atmosphere
+#100 > X	; Brightness
+#101 > X	; Goblins
+#102 > X	; Echoes
+#103 > X	; Sci fi
+
+#104 > #33	; Sitar (= pizzicato)
+#105 > #37	; Banjo
+#106 > #22	; Shamisen(?) (= jazz guitar)
+#107 > #38	; Koto (= harp)
+#108 > #38	; Kalimba (= harp)
+#109 > #76	; Bagpipe (= synth brass 2)
+#110 > #30	; Fiddle (= violin)
+#111 > #38	; Shanai(?) (= harp)
+
+#112 > #94	; Tinkle bell (= music box)
+#113 > #98	; Agogo (= timpani)
+#114 > #98	; Steel drums (= timpani)
+#115 > #98	; Woodblock (= timpani)
+#116 > #98	; Taiko drum (= timpani)
+#117 > #98	; Melodic tom (= timpani)
+#118 > #98	; Synth drum (= timpani)
+#119 > #98	; Reverse cymbal (= timpani)
+
+#120 > X	; Guitar fret
+#121 > X	; Breath noise
+#122 > X	; Seashore
+#123 > X	; Bird tweet
+#124 > X	; Telephone ring
+#125 > X	; Helicopter
+#126 > X	; Applause
+#127 > X	; Gunshot
+

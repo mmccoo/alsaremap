@@ -1,0 +1,185 @@
+amidimap v0.1.1
+===============
+
+An ALSA MIDI mapper
+(C) 2002-2005 David Given
+
+Introduction
+------------
+
+amidimap is a basic MIDI mapper for the ALSA sound system. It acts as a filter,
+receiving and transforming MIDI events and then outputting them.
+
+For example, I have an elderly and decidedly non-GM Yamaha PSR300 keyboard. How
+can I play GM sound files on it? Like this:
+
+amidimap -f psr300.map &      (starts the mapper)
+aconnect 128:1 64:0           (connects the mapper's output to the MIDI device)
+pmidi -p 128:0 thingy.mid     (plays a GM file to the mapper)
+
+The psr300.map file contains all the necessary rules to turn GM into
+PSR300-speak. It remaps all the instruments, swaps channels 9 and 15, and
+remaps the notes on the drum track to match the PSR300's rather limited
+drumkit.
+
+Compilation
+-----------
+
+You need ALSA 1.0 and GNU getopt. The program should otherwise be reasonably
+generic. To build, just run the makefile. Sorry, no automated installation yet;
+just copy amidimap somewhere on your path.
+
+Usage
+-----
+
+amidimap <options> <rules>
+
+<options> consist of:
+  -h, --help
+    Usage information
+
+<rules> consist of:
+  -r <rule>, --rule <rule>
+    Adds a single rule.
+  -f <file>, --file <file>
+    Adds a file full of rules.
+
+You can specify as many rules and map files as you like. They're processed from
+left to right. Here's a minimal example:
+
+amidimap -r '9>X'
+
+This sets up a mapper with two rules. The first discards all events on channel
+9, the drum track. All other events are implicitly forwarded to the output
+port.
+
+You can combine explicit rules and map files.
+
+amidimap -r '9>X' -f psr300.map
+
+If an event does not match anything, it is sent to the output port.
+
+amidimap announces itself to ALSA as a client with an input and an output port.
+The port addresses will be printed to stdout when amidimap is started, or you
+can use aconnect to list them. The program is not interactive. To quit, press
+^C.
+
+Rules
+-----
+
+A rule consists of:
+
+<inputspec> <operator> <outputspec or explicit command>
+
+An <inputspec> or <outputspec> consists of zero or more of:
+
+	<number>	...signifies the channel
+	#<number>	...signifies the instrument
+	&<number>	...signifies the note
+	*<number> ...signifies the controller
+
+Examples:
+	'0 #0 &60'	...represents a middle C played on a piano on channel 0
+	'3 #105'	...represents any note played on a banjo on channel 3
+	'15'		...represents any event on channel 15
+	''		...represents any event
+
+If an event matches the <inputspec>, and an <outputspec> is specified, the
+event is altered to fit the <outputspec> and then processed according to the
+operator:
+
+	>		...sends the event and stops matching
+	=		...does not send the event and continues matching
+
+For example, to swap two channels:
+
+	0 = 32
+	1 = 0
+	32 = 1
+
+This makes use of a little trick amidimap has; MIDI events are represented
+internally as ALSA sequencer events. And they're not limited to 16 channels.
+So here I'm using channel 32 as temporary storage.
+
+Instead of an <outputspec> you can also specify an explicit command:
+
+	T		...trace the event to stdout (implies =)
+	X		...discard the event (implies >)
+
+So '9 > X' means to discard all events on channel 9. Useful for stifling drum
+tracks.
+
+Some MIDI events may be mapped to certain special controller numbers.
+
+    Event type     Number     Value range
+    ----------     ------     -----------
+    Pitchbend      256        -8192..8191 -> 0..127
+    
+This allows mapping of controllers to these events and vice versa. Note,
+that because controllers can only store 8-bit values, and these events may
+contain 14-bit data, this mapping will cause some data to be lost due to
+rounding (particularly pitchbend).
+
+IMPORTANT NOTE: amidimap uses zero-based numbers throughout. So MIDI channels
+     go from 0-15, note 60 is middle C, voice 0 is grand piano, etc.
+
+ANOTHER IMPORTANT NOTE: MIDI events are either note events *or* controller
+     events. This means that if you specify both a note and a controller in
+     a rule, the rule will never be matched --- you never get both at once.
+     However, it is perfectly allowable to specify both an instrument and a
+     controller at the same time.
+     
+See psr300.map for a complete example.
+
+BUGS
+----
+
+What, bugs? In my programs?
+
+Well, actually, there are quite a lot, mostly in the design. amidimap started
+life as a quick hack to make my PSR300 work properly and sort of grew. As a
+result:
+
+  * Non-audible MIDI event processing is a bit basic. For example, channel
+    volume changes. It is possible to change the controller number for those
+    events that *have* controller numbers (not all do), but you can't (yet)
+    change the value itself.
+
+  * amidimap keeps track of what instrument is currently set on each channel,
+    so it can match notes against a particular instrument. While this all seems
+    to work fine, when I connect my PSR300 to the Timidity software synth,
+    Timidity crashes. I don't know if this is a bug in amidimap or Timidity,
+    but You Have Been Warned.
+
+  * The match language is really primitive. It would be nice to do something
+    more generic to allow manipulation of other events, and arithmetic
+    adjustment of the parameters. This would allow, for example, transposing.
+
+  * amidimap only supports a single output port.
+
+  * The PSR300 map file isn't that accurate. I spent about an hour carefully
+    matching up the drum sounds with the GM equivalents --- highly frustrating
+    as the PSR300 only has about 30 --- but didn't have the heart to do the
+    same with the voices, so I had to guess for some of them. That said, it
+    seems to work quite well.
+
+  * Many others, no doubt.
+  
+ENDNOTES
+--------
+
+Please send me any useful map files you have!
+
+CHANGES
+-------
+
+0.1.1: updated to work with ALSA 1.0. ALSA 0.5 is no longer supported.
+    Added support for controllers. Fixed a parse bug that was causing the last
+    line of each file to be ignored (thanks to Grumph for spotting this).
+    Added pitch bend remapping.
+
+LICENSE
+-------
+
+This program is licensed under the GNU General Public License version 2. See
+the COPYRIGHT file for the full text.
